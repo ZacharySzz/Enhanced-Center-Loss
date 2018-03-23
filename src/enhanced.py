@@ -43,6 +43,10 @@ with tf.name_scope('input'):
 global_step = tf.Variable(0, trainable=False, name='global_step')
 
 def get_center_loss(features, labels, alpha, num_classes):
+    '''
+    Center Loss is from the paper: A Discriminative Feature Learning Approach
+                         for Deep Face Recognition
+    '''
     len_features = features.get_shape()[1]
     centers = tf.get_variable('centers', [num_classes, len_features], dtype=tf.float32,
         initializer=tf.constant_initializer(0), trainable=False)
@@ -55,6 +59,8 @@ def get_center_loss(features, labels, alpha, num_classes):
     unique_label, unique_idx, unique_count = tf.unique_with_counts(labels)
     appear_times = tf.gather(unique_count, unique_idx)
     appear_times = tf.reshape(appear_times, [-1, 1])
+    
+    # Enhanced Center Loss
     pairwise_differences = features[:, tf.newaxis] - centers_batch[tf.newaxis, :]
     pairwise_differences_shape = tf.shape(pairwise_differences)
     
