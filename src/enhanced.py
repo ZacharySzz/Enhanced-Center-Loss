@@ -40,7 +40,7 @@ def get_center_loss(features, labels, alpha, num_classes):
     pairwise_differences = pairwise_differences * mask[:, :, tf.newaxis]
 
     # Compute loss
-    pairwise_loss = tf.nn.l2_loss(pairwise_differences)
+    pairwise_loss = tf.square(tf.nn.l2_loss(pairwise_differences)) # squaring the pairwise_loss
 
     loss  = (loss) + (k / pairwise_loss ) # harmonic mean of pairwise loss 
 
