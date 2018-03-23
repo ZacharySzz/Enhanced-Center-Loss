@@ -1,15 +1,15 @@
-LAMBDA = 1.0
-CENTER_LOSS_ALPHA = 0.5
-NUM_CLASSES = 10
 import os
 import numpy as np
 import tensorflow as tf
 import tflearn
 from tensorflow.examples.tutorials.mnist import input_data
 import matplotlib.pyplot as plt
-
+k = 1 # for harmonic mean
 threshold = 0.4
 range_val = 2
+LAMBDA = 1.0
+CENTER_LOSS_ALPHA = 0.5
+NUM_CLASSES = 10
 slim = tf.contrib.slim
 os.environ['CUDA_VISIBLE_DEVICES'] = '0'
 epoch = 0
@@ -32,19 +32,17 @@ def get_center_loss(features, labels, alpha, num_classes):
     unique_label, unique_idx, unique_count = tf.unique_with_counts(labels)
     appear_times = tf.gather(unique_count, unique_idx)
     appear_times = tf.reshape(appear_times, [-1, 1])
-
-    # Pairwise differences
-    diffs = features[:, tf.newaxis] - centers_batch[tf.newaxis, :]
-    diffs_shape = tf.shape(diffs)
+    pairwise_differences = features[:, tf.newaxis] - centers_batch[tf.newaxis, :]
+    pairwise_differences_shape = tf.shape(pairwise_differences)
 
     # Mask diagonal (where i == j)
-    mask = 1 - tf.eye(diffs_shape[0], diffs_shape[1], dtype=diffs.dtype)
-    diffs = diffs * mask[:, :, tf.newaxis]
+    mask = 1 - tf.eye(pairwise_differences_shape[0], pairwise_differences_shape[1], dtype=diffs.dtype)
+    pairwise_differences = pairwise_differences * mask[:, :, tf.newaxis]
 
     # Compute loss
-    new_loss = tf.nn.l2_loss(diffs)
+    pairwise_loss = tf.nn.l2_loss(pairwise_differences)
 
-    loss  = (loss) + (1 / new_loss )
+    loss  = (loss) + (k / pairwise_loss ) # harmonic mean of pairwise loss 
 
 
     diff = diff / tf.cast((1 + appear_times), tf.float32)
