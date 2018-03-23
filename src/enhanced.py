@@ -34,14 +34,12 @@ def get_center_loss(features, labels, alpha, num_classes):
     appear_times = tf.reshape(appear_times, [-1, 1])
     pairwise_differences = features[:, tf.newaxis] - centers_batch[tf.newaxis, :]
     pairwise_differences_shape = tf.shape(pairwise_differences)
-
-    # Mask diagonal (where i == j)
+    
     mask = 1 - tf.eye(pairwise_differences_shape[0], pairwise_differences_shape[1], dtype=diffs.dtype)
     pairwise_differences = pairwise_differences * mask[:, :, tf.newaxis]
-
-    # Compute loss
+    
+    # computing the loss
     pairwise_loss = tf.square(tf.nn.l2_loss(pairwise_differences)) # squaring the pairwise_loss
-
     loss  = (loss) + (k / pairwise_loss ) # harmonic mean of pairwise loss 
 
 
