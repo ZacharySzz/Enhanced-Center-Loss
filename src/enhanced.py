@@ -182,3 +182,22 @@ while step <= 8000:
             fig.savefig('PlotWithnewtest-{}.png'.format(epoch))
         print("====================================================")
         print("\n")
+        
+# Final Graphing       
+li = (sess.run(centers_update_op, feed_dict={
+            input_images: batch_images - mean_data,
+            labels: batch_labels,
+        }))
+# Graphing the end results.
+feat = sess.run(features, feed_dict={input_images:mnist.train.images[:10000]-mean_data})
+labels = mnist.train.labels[:10000]
+
+f = plt.figure(figsize=(16,9))
+c = ['#ff0000', '#ffff00', '#00ff00', '#00ffff', '#0000ff', 
+     '#ff00ff', '#990000', '#999900', '#009900', '#009999']
+for i in range(10):
+    plt.plot(feat[labels==i,0].flatten(), feat[labels==i,1].flatten(), '.', c=c[i])
+plt.scatter(*zip(*li)) # To plot the centers on the datasets. 
+plt.legend(['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'])
+plt.grid()
+plt.show()
