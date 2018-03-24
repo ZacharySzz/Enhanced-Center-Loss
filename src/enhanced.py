@@ -201,3 +201,4 @@ plt.scatter(*zip(*li)) # To plot the centers on the datasets.
 plt.legend(['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'])
 plt.grid()
 plt.show()
+plt.savefig('Cluster-Results.png')
