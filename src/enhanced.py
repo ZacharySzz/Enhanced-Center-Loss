@@ -63,7 +63,7 @@ def get_center_loss(features, labels, alpha, num_classes):
     pairwise_differences = features[:, tf.newaxis] - centers_batch[tf.newaxis, :]
     pairwise_differences_shape = tf.shape(pairwise_differences)
     
-    mask = 1 - tf.eye(pairwise_differences_shape[0], pairwise_differences_shape[1], dtype=diffs.dtype)
+    mask = 1 - tf.eye(pairwise_differences_shape[0], pairwise_differences_shape[1], dtype=pairwise_differences.dtype)
     pairwise_differences = pairwise_differences * mask[:, :, tf.newaxis]
     
     # computing the loss
@@ -135,7 +135,7 @@ summary_op = tf.summary.merge_all()
 sess = tf.Session()
 sess.run(tf.global_variables_initializer())
 saver = tf.train.Saver()
-save_path = saver.save(sess, "/home/super/PycharmProjects/Recursive-CenterLoss/Enhanced_CenterLoss/model-maxi/model-maxi/model.ckpt")
+save_path = saver.save(sess, "model.ckpt")
 print("Model saved in path: %s" % save_path)
 writer = tf.summary.FileWriter('/tmp/mnist_log', sess.graph)
 mean_data = np.mean(mnist.train.images, axis=0)
@@ -197,7 +197,8 @@ c = ['#ff0000', '#ffff00', '#00ff00', '#00ffff', '#0000ff',
      '#ff00ff', '#990000', '#999900', '#009900', '#009999']
 for i in range(10):
     plt.plot(feat[labels==i,0].flatten(), feat[labels==i,1].flatten(), '.', c=c[i])
-plt.scatter(*zip(*li), color='black') # To plot the centers on the datasets. 
+plt.scatter(*zip(*li), color='black') # To plot the centers on the datasets.
+plt.plot(*zip(*li), color='red') # connect all the clusters by a line.
 plt.legend(['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'])
 plt.grid()
 plt.show()
